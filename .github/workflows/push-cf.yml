@@ -32,7 +32,7 @@ jobs:
         run: ibmcloud cf install -f
         shell: bash
       - name: Change Region
-        run: ibmcloud ibmcloud api https://api.au-syd.bluemix.net
+        run: ibmcloud api https://api.au-syd.bluemix.net
         shell: bash
       - name: Target CF
         run: ibmcloud target --cf-api https://api.$IBM_CLOUD_REGION.cf.cloud.ibm.com -r $IBM_CLOUD_REGION -o $IBM_CLOUD_ORG -s $IBM_CLOUD_SPACE
