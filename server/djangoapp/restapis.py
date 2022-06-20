@@ -45,10 +45,11 @@ def get_dealers_from_cf(url, **kwargs):
     json_result = get_request(url)
     if json_result:
         # Get the row list in JSON as dealers
-        dealers = json_result['entries']
+        dealers = json_result['result']
         # For each dealer object
-        for dealer in dealers:
+        for dealer_doc in dealers:
             # Get its content in `doc` object
+            dealer = dealer_doc['doc']
             # Create a CarDealer object with values in `doc` object
             dealer_obj = models.CarDealer(address=dealer["address"], city=dealer["city"], full_name=dealer["full_name"],
                                    id=dealer["id"], lat=dealer["lat"], long=dealer["long"],
@@ -64,19 +65,21 @@ def get_dealer_reviews_by_id_from_cf(url, dealerId):
     results = []
     json_result = get_request(url, dealerId=dealerId)
     if json_result:
-        reviews = json_result['entries']
+        reviews = json_result['result']
+        print(reviews)
         for review in reviews:
             try:
                 review_obj = models.DealerReview(name = review["name"], 
                 dealership = review["dealership"], review = review["review"], purchase=review["purchase"],
                 purchase_date = review["purchase_date"], car_make = review['car_make'],
-                car_model = review['car_model'], car_year= review['car_year'], sentiment= "none")
+                car_model = review['car_model'], car_year= review['car_year'], sentiment= analyze_review_sentiments(review["review"]))
             except:
                 review_obj = models.DealerReview(name = review["name"], 
                 dealership = review["dealership"], review = review["review"], purchase=review["purchase"],
                 purchase_date = 'none', car_make = 'none',
                 car_model = 'none', car_year= 'none', sentiment= "none")
-                
+            
+            print(review_obj.review)
             review_obj.sentiment = analyze_review_sentiments(review_obj.review)
             print(review_obj.sentiment)
                     
@@ -89,10 +92,10 @@ def get_dealer_reviews_by_id_from_cf(url, dealerId):
 
 # Create an `analyze_review_sentiments` method to call Watson NLU and analyze text
 def analyze_review_sentiments(text):
-    api_key = "UNL1ShV-c2bAwfGGyqQFjE-qVOOE-yPskbDybk8CWro0"
-    url = "https://api.us-south.natural-language-understanding.watson.cloud.ibm.com/instances/1bcae669-efa9-4160-9535-18d3807000a3"
+    api_key = "g6xmho0bs0JaUoLurTx-jB3El2JmlDDGpqPzBJiOvy6_"
+    url = "https://api.au-syd.natural-language-understanding.watson.cloud.ibm.com/instances/f965f940-8a37-4d18-a7a4-b68a1832c812"
     texttoanalyze= text
-    version = '2020-08-01'
+    version = '2022-06-20'
     authenticator = IAMAuthenticator(api_key)
     natural_language_understanding = NaturalLanguageUnderstandingV1(
     version='2020-08-01',
@@ -101,7 +104,8 @@ def analyze_review_sentiments(text):
     natural_language_understanding.set_service_url(url)
     response = natural_language_understanding.analyze(
         text=text,
-        features= Features(sentiment= SentimentOptions())
+        features= Features(sentiment= SentimentOptions()),
+        language= "en"
     ).get_result()
     print(json.dumps(response))
     sentiment_score = str(response["sentiment"]["document"]["score"])
