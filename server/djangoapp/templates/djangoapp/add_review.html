@@ -18,54 +18,35 @@
   <body>
     {% include 'navbar.html' %}
     <!--Add review form here -->
-    <main class="container">
-      <!--Add review form here -->
-      {% for dealer in dealers %}
-      <form action="/djangoapp/dealer/{{dealer.id}}/add_review/" method="post">
-        {% csrf_token %} {% endfor %}
-        <div class="form-group">
-          <label for="content">Enter the review content:</label>
-          <textarea
-            class="form-control"
-            id="content"
-            name="content"
-            rows="2"
-            required
-          ></textarea>
-        </div>
-        <div class="form-group form-check">
-          <input
-            class="form-check-input"
-            type="checkbox"
-            name="purchasecheck"
-            id="purchasecheck"
-          />
-          <label for="purchasecheck"
-            >Did you purchase the car? (If yes, kindly fill the below
-            information as well. If no, You can just submit the form.)</label
-          >
-        </div>
-        <div class="form-group">
-          <label for="car">Select your car (model-make-year):</label>
-          <select name="car" id="car" class="form-select">
-            {% for car in cars %}
-            <option selected value="{{car.id}}">
-              {{car.name}}-{{car.car_make.name}}-{{ car.year|date:"Y" }}
-            </option>
-            {% endfor %}
+    <main role="main" class="d-flex justify-content-center pt-3 ">
+      <form class="border border-dark p-4 w-auto h-auto text-center bg-light" action="{% url 'djangoapp:add_review' dealer_id %}"  method="post">
+          {% csrf_token %}
+          
+          <h1 class="text-center">Review for {{dealer_name}}</h1><br>
+          <label for="name"><b>Name</b></label>
+          <br>
+          <input class="form-control" type="text" placeholder="Enter Your Name: " name="name" required>
+          <label for="content"><b>Review</b></label>
+          <br>
+          <textarea class="form-control" id="content" name="content" rows="2" required placeholder="Write your review here: "></textarea>
+          <br>
+          <input class="form-check-input" type="checkbox" name="purchasecheck" id="purchasecheck">
+          <label for="purchasecheck"><b>Did your purchase from this dealership?</b></label>
+          <br>
+          <label for="car"><b>Select vehicle (if purchased)</b></label>
+          <br>
+          <select name="car" id="car" class="form-select" required>
+              {% for car in cars %}
+                  <option selected value="{{car.make.name}}|{{car.name}}|{{ car.year|date:'Y' }}">{{ car.year|date:"Y" }} {{car.make.name}} {{car.name}}</option>
+              {% endfor %}
           </select>
-        </div>
-        <div class="form-group" data-provide="datepicker">
-          <label for="purchasedate">Select your purchase date:</label>
-          <input
-            class="form-control"
-            type="text"
-            name="purchasedate"
-            id="purchasedate"
-          />
-        </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
+          
+          <br>
+          <label for="purchase_date"><b>When was this purchased?</b></label>
+          <input class="date-own form-control" type="date" name="purchase_date" id="purchase_date">
+          <br>
+          <button class="btn btn-warning btn-lg" type="submit">Submit Review</button>
       </form>
-    </main>
+  </main>
   </body>
 </html>
