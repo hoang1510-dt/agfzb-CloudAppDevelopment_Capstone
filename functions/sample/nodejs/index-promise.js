@@ -14,7 +14,10 @@ function main(params) {
     cloudant.setServiceUrl(params.COUCH_URL);
 
     let dbListPromise = getDbs(cloudant);
-    return dbListPromise;
+    if(params.state) {
+        return getMatchingRecords(cloudant,"dealerships",{state:params.state});
+    }
+    return getAllRecords(cloudant,"dealerships");
 }
 
 function getDbs(cloudant) {
