@@ -146,13 +146,12 @@ def add_review(request, dealer_id):
                 review["car_make"]=car_parts[0]
                 review["car_model"]=car_parts[1]
                 review["car_year"]=car_parts[2]
-
             else:
                 review["purchase_date"]=None
                 review["car_make"]=None
                 review["car_model"]=None
                 review["car_year"]=None
-            print(review)
+            print( {"review": review})
             json_result = post_request("https://e1159a1a.au-syd.apigw.appdomain.cloud/reviews/review", {"review": review} )
             print(json_result)
             if "error" in json_result:
