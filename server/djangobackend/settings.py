@@ -27,7 +27,7 @@ DEBUG = True
 
 APPEND_SLASH = True
 
-ALLOWED_HOSTS = ["localhost"]
+ALLOWED_HOSTS = ["localhost","vn-ibmcloud-bestcar.au-syd.mybluemix.net"]
 
 
 # Application definition
